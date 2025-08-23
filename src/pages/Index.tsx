@@ -7,7 +7,11 @@ import { Button } from "@/components/ui/button";
 import WorkoutLogger from "@/components/WorkoutLogger";
 import WorkoutSuggestionsPanel from "@/components/WorkoutSuggestionsPanel";
 
+import { useAuth } from "@/hooks/useAuth";
+
 const Index = () => {
+  const { user, signOut } = useAuth();
+  
   // Mock data for demonstration
   const mockWorkouts = [
     {
@@ -34,19 +38,25 @@ const Index = () => {
     }
   ];
 
+  const handleSignOut = async () => {
+    await signOut();
+  };
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="flex items-center justify-between p-6 border-b border-border">
         <div>
           <h1 className="text-2xl font-bold text-foreground">FitTogether</h1>
-          <p className="text-sm text-muted-foreground">Stay motivated together</p>
+          <p className="text-sm text-muted-foreground">
+            Welcome back, {user?.email?.split('@')[0] || 'Fitness Buddy'}
+          </p>
         </div>
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon">
             <Bell className="w-5 h-5" />
           </Button>
-          <Button variant="ghost" size="icon">
+          <Button variant="ghost" size="icon" onClick={handleSignOut}>
             <Settings className="w-5 h-5" />
           </Button>
         </div>
