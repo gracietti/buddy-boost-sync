@@ -5,6 +5,7 @@ import { StatsOverview } from "@/components/StatsOverview";
 import { Bell, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import WorkoutLogger from "@/components/WorkoutLogger";
+import { ConnectPartnerForm } from "@/components/ConnectPartnerForm";
 import WorkoutSuggestionsPanel from "@/components/WorkoutSuggestionsPanel";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -66,6 +67,11 @@ const Index = () => {
             weeklyGoal={5}
             streak={streak}
           />
+        )}
+
+        {/* Connect Partner Form - only show if not connected */}
+        {!isConnected && !profileLoading && (
+          <ConnectPartnerForm />
         )}
 
         {/* Workout Logger */}

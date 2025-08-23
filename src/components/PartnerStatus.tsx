@@ -1,7 +1,9 @@
-import { Users, UserCheck, UserPlus } from "lucide-react";
+import { Users, UserCheck, UserPlus, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useProfile } from "@/hooks/useProfile";
+import { useInviteSystem } from "@/hooks/useInviteSystem";
 
 interface PartnerStatusProps {
   isConnected: boolean;
@@ -11,6 +13,15 @@ interface PartnerStatusProps {
 }
 
 export function PartnerStatus({ isConnected, partnerName, partnerAvatar, lastActive }: PartnerStatusProps) {
+  const { profile } = useProfile();
+  const { shareInviteCode } = useInviteSystem();
+
+  const handleShareInvite = () => {
+    if (profile?.invite_code) {
+      shareInviteCode(profile.invite_code);
+    }
+  };
+
   if (!isConnected) {
     return (
       <Card className="fitness-card text-center animate-fade-in">
@@ -20,13 +31,18 @@ export function PartnerStatus({ isConnected, partnerName, partnerAvatar, lastAct
           </div>
           <div>
             <h3 className="font-semibold text-foreground mb-1">Connect Your Partner</h3>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="text-sm text-muted-foreground mb-2">
               Share your fitness journey together
             </p>
+            {profile?.invite_code && (
+              <p className="text-xs text-muted-foreground mb-4 font-mono bg-muted px-2 py-1 rounded">
+                Your code: {profile.invite_code}
+              </p>
+            )}
           </div>
-          <Button className="gradient-primary">
-            <Users className="w-4 h-4 mr-2" />
-            Send Invite Code
+          <Button onClick={handleShareInvite} className="gradient-primary" disabled={!profile?.invite_code}>
+            <Share2 className="w-4 h-4 mr-2" />
+            Share via WhatsApp
           </Button>
         </div>
       </Card>

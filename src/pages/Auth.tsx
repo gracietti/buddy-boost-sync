@@ -13,10 +13,21 @@ const Auth: React.FC = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [inviteCode, setInviteCode] = useState('');
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Check for invite code in URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const codeFromUrl = urlParams.get('invite');
+    if (codeFromUrl) {
+      setInviteCode(codeFromUrl);
+      setIsSignUp(true); // Default to signup when invite code is present
+    }
+  }, []);
 
   useEffect(() => {
     // Check if user is already logged in
@@ -53,11 +64,14 @@ const Auth: React.FC = () => {
     try {
       if (isSignUp) {
         const redirectUrl = `${window.location.origin}/`;
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email,
           password,
           options: {
-            emailRedirectTo: redirectUrl
+            emailRedirectTo: redirectUrl,
+            data: {
+              invite_code: inviteCode || undefined
+            }
           }
         });
 
@@ -72,6 +86,18 @@ const Auth: React.FC = () => {
             throw error;
           }
         } else {
+          // If there's an invite code and user was created, connect them immediately
+          if (inviteCode && data.user) {
+            // Wait a moment for the profile to be created by the trigger
+            setTimeout(async () => {
+              try {
+                await connectWithInviteCode(inviteCode, data.user!.id);
+              } catch (err) {
+                console.error('Error connecting with invite code:', err);
+              }
+            }, 1000);
+          }
+          
           toast({
             title: "Check your email",
             description: "We've sent you a confirmation link to complete your registration.",
@@ -104,6 +130,34 @@ const Auth: React.FC = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const connectWithInviteCode = async (code: string, userId: string) => {
+    try {
+      // Find the profile with this invite code
+      const { data: inviterProfile, error: findError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('invite_code', code.trim().toUpperCase())
+        .single();
+
+      if (findError || !inviterProfile) return;
+
+      if (inviterProfile.user_id === userId) return;
+
+      // Connect both users
+      await supabase
+        .from('profiles')
+        .update({ partner_id: inviterProfile.user_id })
+        .eq('user_id', userId);
+
+      await supabase
+        .from('profiles')
+        .update({ partner_id: userId })
+        .eq('user_id', inviterProfile.user_id);
+    } catch (error) {
+      console.error('Error connecting with invite code:', error);
     }
   };
 
@@ -207,6 +261,24 @@ const Auth: React.FC = () => {
                 />
               </div>
             </div>
+
+            {/* Invite Code Field (only for sign up) */}
+            {isSignUp && (
+              <div className="space-y-2">
+                <Label htmlFor="inviteCode">Invite Code (Optional)</Label>
+                <Input
+                  id="inviteCode"
+                  type="text"
+                  placeholder="Enter partner's invite code"
+                  value={inviteCode}
+                  onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
+                  className="uppercase"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Have a partner's invite code? Enter it to connect automatically.
+                </p>
+              </div>
+            )}
 
             <Button 
               type="submit" 
