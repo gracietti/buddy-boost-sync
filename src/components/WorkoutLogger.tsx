@@ -187,7 +187,7 @@ const WorkoutLogger: React.FC = () => {
                 />
               </div>
               <div className="col-span-2">
-                <Label htmlFor="exercise-weight" className="text-xs text-muted-foreground">Weight (kg)</Label>
+                <Label htmlFor="exercise-weight" className="text-xs text-muted-foreground">Weight</Label>
                 <Input
                   id="exercise-weight"
                   type="number"

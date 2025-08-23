@@ -2,8 +2,9 @@ import { WorkoutCard } from "@/components/WorkoutCard";
 import { EncouragementPanel } from "@/components/EncouragementPanel";
 import { PartnerTabs } from "@/components/PartnerTabs";
 import { StatsOverview } from "@/components/StatsOverview";
-import { Bell, Settings } from "lucide-react";
+import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SettingsDialog } from "@/components/SettingsDialog";
 
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -12,13 +13,9 @@ import { useWorkouts } from "@/hooks/useWorkouts";
 import { useProfile } from "@/hooks/useProfile";
 
 const Index = () => {
-  const { user, signOut } = useAuth();
+  const { user } = useAuth();
   const { workouts, loading: workoutsLoading, weeklyStats, streak } = useWorkouts();
   const { profile, partnerProfile, loading: profileLoading, isConnected, partnerName } = useProfile();
-
-  const handleSignOut = async () => {
-    await signOut();
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -34,9 +31,7 @@ const Index = () => {
           <Button variant="ghost" size="icon">
             <Bell className="w-5 h-5" />
           </Button>
-          <Button variant="ghost" size="icon" onClick={handleSignOut}>
-            <Settings className="w-5 h-5" />
-          </Button>
+          <SettingsDialog />
         </div>
       </header>
 
