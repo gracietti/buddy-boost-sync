@@ -4,6 +4,8 @@ import { PartnerStatus } from "@/components/PartnerStatus";
 import { StatsOverview } from "@/components/StatsOverview";
 import { Bell, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import WorkoutLogger from "@/components/WorkoutLogger";
+import WorkoutSuggestionsPanel from "@/components/WorkoutSuggestionsPanel";
 
 const Index = () => {
   // Mock data for demonstration
@@ -64,6 +66,15 @@ const Index = () => {
           weeklyWorkouts={4}
           weeklyGoal={5}
           streak={7}
+        />
+
+        {/* Workout Logger */}
+        <WorkoutLogger />
+
+        {/* AI Workout Suggestions */}
+        <WorkoutSuggestionsPanel 
+          userGoals="Build strength and improve cardio"
+          recentWorkouts={mockWorkouts}
         />
 
         {/* Recent Workouts */}
