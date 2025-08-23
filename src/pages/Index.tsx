@@ -6,37 +6,16 @@ import { Bell, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import WorkoutLogger from "@/components/WorkoutLogger";
 import WorkoutSuggestionsPanel from "@/components/WorkoutSuggestionsPanel";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { useAuth } from "@/hooks/useAuth";
+import { useWorkouts } from "@/hooks/useWorkouts";
+import { useProfile } from "@/hooks/useProfile";
 
 const Index = () => {
   const { user, signOut } = useAuth();
-  
-  // Mock data for demonstration
-  const mockWorkouts = [
-    {
-      type: "Morning Run",
-      duration: "32 min",
-      calories: 340,
-      time: "8:15 AM",
-      isPartner: false
-    },
-    {
-      type: "HIIT Workout",
-      duration: "25 min", 
-      calories: 285,
-      time: "7:30 AM",
-      isPartner: true,
-      partnerName: "Sarah"
-    },
-    {
-      type: "Yoga Flow",
-      duration: "45 min",
-      calories: 180,
-      time: "Yesterday",
-      isPartner: false
-    }
-  ];
+  const { workouts, loading: workoutsLoading, weeklyStats, streak } = useWorkouts();
+  const { profile, partnerProfile, loading: profileLoading, isConnected, partnerName } = useProfile();
 
   const handleSignOut = async () => {
     await signOut();
@@ -65,18 +44,29 @@ const Index = () => {
       {/* Main Content */}
       <main className="p-6 space-y-6 max-w-md mx-auto">
         {/* Partner Status */}
-        <PartnerStatus 
-          isConnected={true}
-          partnerName="Sarah"
-          lastActive="2 min ago"
-        />
+        {profileLoading ? (
+          <Skeleton className="h-20 w-full" />
+        ) : (
+          <PartnerStatus 
+            isConnected={isConnected}
+            partnerName={partnerName}
+            lastActive="2 min ago"
+          />
+        )}
 
         {/* Stats Overview */}
-        <StatsOverview 
-          weeklyWorkouts={4}
-          weeklyGoal={5}
-          streak={7}
-        />
+        {workoutsLoading ? (
+          <div className="grid grid-cols-2 gap-4">
+            <Skeleton className="h-24 w-full" />
+            <Skeleton className="h-24 w-full" />
+          </div>
+        ) : (
+          <StatsOverview 
+            weeklyWorkouts={weeklyStats.weeklyWorkouts}
+            weeklyGoal={5}
+            streak={streak}
+          />
+        )}
 
         {/* Workout Logger */}
         <WorkoutLogger />
@@ -84,18 +74,47 @@ const Index = () => {
         {/* AI Workout Suggestions */}
         <WorkoutSuggestionsPanel 
           userGoals="Build strength and improve cardio"
-          recentWorkouts={mockWorkouts}
+          recentWorkouts={workouts.map(w => ({
+            type: w.type,
+            duration: `${w.duration_minutes} min`,
+            calories: w.calories || 0,
+            time: new Date(w.completed_at).toLocaleDateString(),
+            isPartner: false
+          }))}
         />
 
         {/* Recent Workouts */}
         <div className="space-y-4">
           <h2 className="text-lg font-semibold text-foreground">Recent Activity</h2>
-          {mockWorkouts.map((workout, index) => (
-            <WorkoutCard 
-              key={index}
-              {...workout}
-            />
-          ))}
+          {workoutsLoading ? (
+            <div className="space-y-4">
+              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-16 w-full" />
+            </div>
+          ) : workouts.length === 0 ? (
+            <p className="text-muted-foreground text-center py-8">
+              No workouts logged yet. Start by logging your first workout above!
+            </p>
+          ) : (
+            workouts.map((workout) => {
+              const completedDate = new Date(workout.completed_at);
+              const timeDisplay = completedDate.toLocaleDateString() === new Date().toLocaleDateString() 
+                ? completedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                : completedDate.toLocaleDateString();
+              
+              return (
+                <WorkoutCard 
+                  key={workout.id}
+                  type={workout.type}
+                  duration={`${workout.duration_minutes} min`}
+                  calories={workout.calories || 0}
+                  time={timeDisplay}
+                  isPartner={false}
+                />
+              );
+            })
+          )}
         </div>
 
         {/* Encouragement Panel */}
