@@ -4,7 +4,7 @@ import { PartnerTabs } from "@/components/PartnerTabs";
 import { StatsOverview } from "@/components/StatsOverview";
 import { Bell, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import WorkoutLogger from "@/components/WorkoutLogger";
+
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { useAuth } from "@/hooks/useAuth";
