@@ -1,11 +1,10 @@
 import { WorkoutCard } from "@/components/WorkoutCard";
 import { EncouragementPanel } from "@/components/EncouragementPanel";
-import { PartnerStatus } from "@/components/PartnerStatus";
+import { PartnerTabs } from "@/components/PartnerTabs";
 import { StatsOverview } from "@/components/StatsOverview";
 import { Bell, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import WorkoutLogger from "@/components/WorkoutLogger";
-import { ConnectPartnerForm } from "@/components/ConnectPartnerForm";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { useAuth } from "@/hooks/useAuth";
@@ -43,16 +42,8 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="p-6 space-y-6 max-w-md mx-auto">
-        {/* Partner Status */}
-        {profileLoading ? (
-          <Skeleton className="h-20 w-full" />
-        ) : (
-          <PartnerStatus 
-            isConnected={isConnected}
-            partnerName={partnerName}
-            lastActive="2 min ago"
-          />
-        )}
+        {/* Partner Tabs */}
+        <PartnerTabs />
 
         {/* Stats Overview */}
         {workoutsLoading ? (
@@ -66,11 +57,6 @@ const Index = () => {
             weeklyGoal={5}
             streak={streak}
           />
-        )}
-
-        {/* Connect Partner Form - only show if not connected */}
-        {!isConnected && !profileLoading && (
-          <ConnectPartnerForm />
         )}
 
         {/* Workout Logger */}

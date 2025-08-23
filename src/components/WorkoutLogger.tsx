@@ -94,6 +94,9 @@ const WorkoutLogger: React.FC = () => {
       setDuration('');
       setNotes('');
       setExercises([]);
+      
+      // Trigger a page reload to refresh the workouts list
+      window.location.reload();
     } catch (error) {
       console.error('Error logging workout:', error);
       toast({
@@ -154,36 +157,50 @@ const WorkoutLogger: React.FC = () => {
           <Label>Exercises</Label>
           <div className="space-y-3 mt-2">
             <div className="grid grid-cols-12 gap-2">
-              <Input
-                placeholder="Exercise name"
-                value={currentExercise.name}
-                onChange={(e) => setCurrentExercise({ ...currentExercise, name: e.target.value })}
-                className="col-span-5"
-              />
-              <Input
-                type="number"
-                placeholder="Sets"
-                value={currentExercise.sets}
-                onChange={(e) => setCurrentExercise({ ...currentExercise, sets: parseInt(e.target.value) || 1 })}
-                className="col-span-2"
-              />
-              <Input
-                type="number"
-                placeholder="Reps"
-                value={currentExercise.reps}
-                onChange={(e) => setCurrentExercise({ ...currentExercise, reps: parseInt(e.target.value) || 1 })}
-                className="col-span-2"
-              />
-              <Input
-                type="number"
-                placeholder="Weight"
-                value={currentExercise.weight || ''}
-                onChange={(e) => setCurrentExercise({ ...currentExercise, weight: e.target.value ? parseFloat(e.target.value) : undefined })}
-                className="col-span-2"
-              />
-              <Button onClick={addExercise} size="sm" className="col-span-1">
-                <Plus className="h-4 w-4" />
-              </Button>
+              <div className="col-span-5">
+                <Label htmlFor="exercise-name" className="text-xs text-muted-foreground">Name</Label>
+                <Input
+                  id="exercise-name"
+                  placeholder="Exercise name"
+                  value={currentExercise.name}
+                  onChange={(e) => setCurrentExercise({ ...currentExercise, name: e.target.value })}
+                />
+              </div>
+              <div className="col-span-2">
+                <Label htmlFor="exercise-sets" className="text-xs text-muted-foreground">Sets</Label>
+                <Input
+                  id="exercise-sets"
+                  type="number"
+                  placeholder="Sets"
+                  value={currentExercise.sets}
+                  onChange={(e) => setCurrentExercise({ ...currentExercise, sets: parseInt(e.target.value) || 1 })}
+                />
+              </div>
+              <div className="col-span-2">
+                <Label htmlFor="exercise-reps" className="text-xs text-muted-foreground">Reps</Label>
+                <Input
+                  id="exercise-reps"
+                  type="number"
+                  placeholder="Reps"
+                  value={currentExercise.reps}
+                  onChange={(e) => setCurrentExercise({ ...currentExercise, reps: parseInt(e.target.value) || 1 })}
+                />
+              </div>
+              <div className="col-span-2">
+                <Label htmlFor="exercise-weight" className="text-xs text-muted-foreground">Weight (kg)</Label>
+                <Input
+                  id="exercise-weight"
+                  type="number"
+                  placeholder="Weight"
+                  value={currentExercise.weight || ''}
+                  onChange={(e) => setCurrentExercise({ ...currentExercise, weight: e.target.value ? parseFloat(e.target.value) : undefined })}
+                />
+              </div>
+              <div className="col-span-1 flex items-end">
+                <Button onClick={addExercise} size="sm" className="w-full">
+                  <Plus className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
             
             {exercises.length > 0 && (
