@@ -14,13 +14,154 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      messages: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          metadata: Json | null
+          read_at: string | null
+          recipient_id: string
+          sender_id: string
+          type: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          read_at?: string | null
+          recipient_id: string
+          sender_id: string
+          type: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          read_at?: string | null
+          recipient_id?: string
+          sender_id?: string
+          type?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          invite_code: string | null
+          partner_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          invite_code?: string | null
+          partner_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          invite_code?: string | null
+          partner_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_partner_id_fkey"
+            columns: ["partner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      voice_recordings: {
+        Row: {
+          audio_url: string
+          created_at: string
+          duration_seconds: number | null
+          id: string
+          message_id: string
+        }
+        Insert: {
+          audio_url: string
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          message_id: string
+        }
+        Update: {
+          audio_url?: string
+          created_at?: string
+          duration_seconds?: number | null
+          id?: string
+          message_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voice_recordings_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workouts: {
+        Row: {
+          calories: number | null
+          completed_at: string
+          created_at: string
+          duration_minutes: number
+          id: string
+          notes: string | null
+          type: string
+          user_id: string
+        }
+        Insert: {
+          calories?: number | null
+          completed_at?: string
+          created_at?: string
+          duration_minutes: number
+          id?: string
+          notes?: string | null
+          type: string
+          user_id: string
+        }
+        Update: {
+          calories?: number | null
+          completed_at?: string
+          created_at?: string
+          duration_minutes?: number
+          id?: string
+          notes?: string | null
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_invite_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
