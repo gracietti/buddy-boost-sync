@@ -42,62 +42,18 @@ const Index = () => {
 
       {/* Main Content */}
       <main className="p-6 space-y-6 max-w-md mx-auto">
-        {/* Partner Tabs */}
-        <PartnerTabs />
-
-        {/* Stats Overview */}
-        {workoutsLoading ? (
-          <div className="grid grid-cols-2 gap-4">
-            <Skeleton className="h-24 w-full" />
-            <Skeleton className="h-24 w-full" />
-          </div>
-        ) : (
-          <StatsOverview 
-            weeklyWorkouts={weeklyStats.weeklyWorkouts}
-            weeklyGoal={5}
-            streak={streak}
-          />
-        )}
+        {/* Activity and Partner Tabs */}
+        <PartnerTabs 
+          weeklyStats={weeklyStats}
+          streak={streak}
+          userWorkouts={workouts}
+          workoutsLoading={workoutsLoading}
+        />
 
         {/* Workout Logger */}
         <WorkoutLogger />
 
-        {/* Recent Workouts */}
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-foreground">Recent Activity</h2>
-          {workoutsLoading ? (
-            <div className="space-y-4">
-              <Skeleton className="h-16 w-full" />
-              <Skeleton className="h-16 w-full" />
-              <Skeleton className="h-16 w-full" />
-            </div>
-          ) : workouts.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8">
-              No workouts logged yet. Start by logging your first workout above!
-            </p>
-          ) : (
-            workouts.map((workout) => {
-              const completedDate = new Date(workout.completed_at);
-              const timeDisplay = completedDate.toLocaleDateString() === new Date().toLocaleDateString() 
-                ? completedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-                : completedDate.toLocaleDateString();
-              
-              return (
-                <WorkoutCard 
-                  key={workout.id}
-                  type={workout.type}
-                  duration={`${workout.duration_minutes} min`}
-                  calories={workout.calories || 0}
-                  time={timeDisplay}
-                  isPartner={false}
-                />
-              );
-            })
-          )}
-        </div>
-
-        {/* Encouragement Panel */}
-        <EncouragementPanel />
+        {/* Encouragement Panel - moved to Partner tab */}
       </main>
     </div>
   );

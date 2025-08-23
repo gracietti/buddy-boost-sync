@@ -3,14 +3,26 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PartnerStatus } from "@/components/PartnerStatus";
 import { ConnectPartnerForm } from "@/components/ConnectPartnerForm";
+import { EncouragementPanel } from "@/components/EncouragementPanel";
 import { WorkoutCard } from "@/components/WorkoutCard";
+import { StatsOverview } from "@/components/StatsOverview";
 import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import type { Workout } from "@/hooks/useWorkouts";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function PartnerTabs() {
+interface PartnerTabsProps {
+  weeklyStats: {
+    weeklyWorkouts: number;
+    totalCalories: number;
+  };
+  streak: number;
+  userWorkouts: Workout[];
+  workoutsLoading: boolean;
+}
+
+export function PartnerTabs({ weeklyStats, streak, userWorkouts, workoutsLoading }: PartnerTabsProps) {
   const { profile, partnerProfile, loading: profileLoading, isConnected, partnerName } = useProfile();
   const { user } = useAuth();
   const [partnerWorkouts, setPartnerWorkouts] = useState<Workout[]>([]);
@@ -51,13 +63,62 @@ export function PartnerTabs() {
   }
 
   return (
-    <Tabs defaultValue="status" className="w-full">
+    <Tabs defaultValue="activity" className="w-full">
       <TabsList className="grid w-full grid-cols-2">
-        <TabsTrigger value="status">Partner</TabsTrigger>
-        <TabsTrigger value="activity" disabled={!isConnected}>Activity</TabsTrigger>
+        <TabsTrigger value="activity">Activity</TabsTrigger>
+        <TabsTrigger value="partner">Partner</TabsTrigger>
       </TabsList>
       
-      <TabsContent value="status" className="space-y-4">
+      <TabsContent value="activity" className="space-y-4">
+        {/* My Goals and History */}
+        <StatsOverview 
+          weeklyWorkouts={weeklyStats.weeklyWorkouts}
+          weeklyGoal={5}
+          streak={streak}
+        />
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>My Recent Activity</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {workoutsLoading ? (
+              <div className="space-y-4">
+                <Skeleton className="h-16 w-full" />
+                <Skeleton className="h-16 w-full" />
+                <Skeleton className="h-16 w-full" />
+              </div>
+            ) : userWorkouts.length === 0 ? (
+              <p className="text-muted-foreground text-center py-8">
+                No workouts logged yet. Start by logging your first workout!
+              </p>
+            ) : (
+              <div className="space-y-4">
+                {userWorkouts.map((workout) => {
+                  const completedDate = new Date(workout.completed_at);
+                  const timeDisplay = completedDate.toLocaleDateString() === new Date().toLocaleDateString() 
+                    ? completedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                    : completedDate.toLocaleDateString();
+                  
+                  return (
+                    <WorkoutCard 
+                      key={workout.id}
+                      type={workout.type}
+                      duration={`${workout.duration_minutes} min`}
+                      calories={workout.calories || 0}
+                      time={timeDisplay}
+                      isPartner={false}
+                    />
+                  );
+                })}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </TabsContent>
+      
+      <TabsContent value="partner" className="space-y-4">
+        {/* Partner Status and Connection */}
         <PartnerStatus 
           isConnected={isConnected}
           partnerName={partnerName}
@@ -65,9 +126,11 @@ export function PartnerTabs() {
         />
         
         {!isConnected && <ConnectPartnerForm />}
-      </TabsContent>
-      
-      <TabsContent value="activity" className="space-y-4">
+        
+        {/* Encouragement Panel */}
+        <EncouragementPanel />
+        
+        {/* Partner's Activity */}
         {isConnected && (
           <Card>
             <CardHeader>
