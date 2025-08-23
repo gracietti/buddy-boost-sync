@@ -162,6 +162,10 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: string
       }
+      is_profile_visible_to_current_user: {
+        Args: { target_user_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
