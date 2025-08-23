@@ -6,7 +6,6 @@ import { Bell, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import WorkoutLogger from "@/components/WorkoutLogger";
 import { ConnectPartnerForm } from "@/components/ConnectPartnerForm";
-import WorkoutSuggestionsPanel from "@/components/WorkoutSuggestionsPanel";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { useAuth } from "@/hooks/useAuth";
@@ -76,18 +75,6 @@ const Index = () => {
 
         {/* Workout Logger */}
         <WorkoutLogger />
-
-        {/* AI Workout Suggestions */}
-        <WorkoutSuggestionsPanel 
-          userGoals="Build strength and improve cardio"
-          recentWorkouts={workouts.map(w => ({
-            type: w.type,
-            duration: `${w.duration_minutes} min`,
-            calories: w.calories || 0,
-            time: new Date(w.completed_at).toLocaleDateString(),
-            isPartner: false
-          }))}
-        />
 
         {/* Recent Workouts */}
         <div className="space-y-4">
