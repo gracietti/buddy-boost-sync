@@ -6,6 +6,7 @@ import { ConnectPartnerForm } from "@/components/ConnectPartnerForm";
 import { EncouragementPanel } from "@/components/EncouragementPanel";
 import { WorkoutCard } from "@/components/WorkoutCard";
 import { StatsOverview } from "@/components/StatsOverview";
+import WorkoutLogger from "@/components/WorkoutLogger";
 import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -76,6 +77,9 @@ export function PartnerTabs({ weeklyStats, streak, userWorkouts, workoutsLoading
           weeklyGoal={5}
           streak={streak}
         />
+        
+        {/* Workout Logger */}
+        <WorkoutLogger />
         
         <Card>
           <CardHeader>

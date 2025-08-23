@@ -50,10 +50,6 @@ const Index = () => {
           workoutsLoading={workoutsLoading}
         />
 
-        {/* Workout Logger */}
-        <WorkoutLogger />
-
-        {/* Encouragement Panel - moved to Partner tab */}
       </main>
     </div>
   );
