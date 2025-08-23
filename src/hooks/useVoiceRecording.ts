@@ -64,9 +64,16 @@ export const useVoiceRecording = () => {
               resolve(data.text);
             } catch (error) {
               console.error('Transcription error:', error);
+              
+              // Check if it's a quota error
+              const errorMessage = error.message || '';
+              const isQuotaError = errorMessage.includes('quota') || errorMessage.includes('insufficient_quota');
+              
               toast({
                 title: "Transcription Error",
-                description: "Could not transcribe audio",
+                description: isQuotaError 
+                  ? "Voice transcription service is temporarily unavailable. Please try typing your note instead."
+                  : "Could not transcribe audio. Please try again or type your note instead.",
                 variant: "destructive",
               });
               setIsTranscribing(false);
