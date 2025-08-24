@@ -24,7 +24,7 @@ const Index = () => {
         <div>
           <h1 className="text-2xl font-bold text-foreground">FitTogether</h1>
           <p className="text-sm text-muted-foreground">
-            Welcome back, {user?.email?.split('@')[0] || 'Fitness Buddy'}
+            Welcome back, {profile?.display_name || 'Marcelo'}
           </p>
         </div>
         <div className="flex items-center gap-3">
