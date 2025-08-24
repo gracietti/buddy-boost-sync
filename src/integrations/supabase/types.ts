@@ -16,6 +16,7 @@ export type Database = {
     Tables: {
       messages: {
         Row: {
+          claps_count: number | null
           content: string
           created_at: string
           id: string
@@ -26,6 +27,7 @@ export type Database = {
           type: string
         }
         Insert: {
+          claps_count?: number | null
           content: string
           created_at?: string
           id?: string
@@ -36,6 +38,7 @@ export type Database = {
           type: string
         }
         Update: {
+          claps_count?: number | null
           content?: string
           created_at?: string
           id?: string

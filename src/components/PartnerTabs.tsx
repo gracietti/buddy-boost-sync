@@ -104,16 +104,17 @@ export function PartnerTabs({ weeklyStats, streak, userWorkouts, workoutsLoading
                     ? completedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                     : completedDate.toLocaleDateString();
                   
-                  return (
-                    <WorkoutCard 
-                      key={workout.id}
-                      type={workout.type}
-                      duration={`${workout.duration_minutes} min`}
-                      calories={workout.calories || 0}
-                      time={timeDisplay}
-                      isPartner={false}
-                    />
-                  );
+                    return (
+                      <WorkoutCard 
+                        key={workout.id}
+                        type={workout.type}
+                        duration={`${workout.duration_minutes} min`}
+                        calories={workout.calories || 0}
+                        time={timeDisplay}
+                        isPartner={false}
+                        completedAt={workout.completed_at}
+                      />
+                    );
                 })}
               </div>
             )}
@@ -159,16 +160,17 @@ export function PartnerTabs({ weeklyStats, streak, userWorkouts, workoutsLoading
                       ? completedDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                       : completedDate.toLocaleDateString();
                     
-                    return (
-                      <WorkoutCard 
-                        key={workout.id}
-                        type={workout.type}
-                        duration={`${workout.duration_minutes} min`}
-                        calories={workout.calories || 0}
-                        time={timeDisplay}
-                        isPartner={true}
-                      />
-                    );
+                      return (
+                        <WorkoutCard 
+                          key={workout.id}
+                          type={workout.type}
+                          duration={`${workout.duration_minutes} min`}
+                          calories={workout.calories || 0}
+                          time={timeDisplay}
+                          isPartner={true}
+                          completedAt={workout.completed_at}
+                        />
+                      );
                   })}
                 </div>
               )}

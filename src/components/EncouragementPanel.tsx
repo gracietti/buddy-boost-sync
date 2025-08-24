@@ -3,6 +3,7 @@ import { Heart, MessageCircle, Mic, Send, Smile } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import VoiceNoteRecorder from "@/components/VoiceNoteRecorder";
 import { useProfile } from "@/hooks/useProfile";
 import { useAuth } from "@/hooks/useAuth";
@@ -35,6 +36,7 @@ export function EncouragementPanel() {
   const [message, setMessage] = useState("");
   const [showStickers, setShowStickers] = useState(false);
   const [showQuickMessages, setShowQuickMessages] = useState(false);
+  const [clapsToSend, setClapsToSend] = useState(1);
   const { partnerProfile } = useProfile();
   const { user } = useAuth();
   const { toast } = useToast();
@@ -75,6 +77,44 @@ export function EncouragementPanel() {
       toast({
         title: "Failed to Send",
         description: "Could not send your encouragement. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const sendClaps = async (count: number) => {
+    if (!partnerProfile?.user_id || !user) {
+      toast({
+        title: "No Partner Connected",
+        description: "Connect with a partner to send claps.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    try {
+      const { error } = await supabase
+        .from('messages')
+        .insert({
+          sender_id: user.id,
+          recipient_id: partnerProfile.user_id,
+          content: `${count} clap${count > 1 ? 's' : ''}`,
+          type: 'clap',
+          claps_count: count,
+          metadata: { isClap: true, count }
+        });
+
+      if (error) throw error;
+
+      toast({
+        title: "Claps Sent! 👏",
+        description: `You sent ${count} clap${count > 1 ? 's' : ''} to your partner.`,
+      });
+    } catch (error) {
+      console.error('Error sending claps:', error);
+      toast({
+        title: "Failed to Send",
+        description: "Could not send claps. Please try again.",
         variant: "destructive",
       });
     }
@@ -201,6 +241,36 @@ export function EncouragementPanel() {
               handleVoiceMessage(`data:text/plain;base64,${btoa(text)}`);
             }}
           />
+        </div>
+
+        {/* Claps Section */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium">Send Claps 👏</span>
+            <Badge variant="secondary">{clapsToSend}</Badge>
+          </div>
+          
+          <div className="flex gap-2">
+            {[1, 2, 3, 4, 5].map((count) => (
+              <Button
+                key={count}
+                variant={clapsToSend === count ? "default" : "outline"}
+                size="sm"
+                onClick={() => setClapsToSend(count)}
+                className="w-12 h-12 text-lg"
+              >
+                {count}
+              </Button>
+            ))}
+          </div>
+          
+          <Button 
+            onClick={() => sendClaps(clapsToSend)}
+            className="w-full"
+            variant="secondary"
+          >
+            Send {clapsToSend} Clap{clapsToSend > 1 ? 's' : ''} 👏
+          </Button>
         </div>
 
         {/* Stickers Grid */}
